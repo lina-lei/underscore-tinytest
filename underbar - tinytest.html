@@ -1,10 +1,12 @@
 <script src="tinytest.js"></script>
 <script>
 
+// Returns whatever value is passed as the argument.
 function identity(input){
   return input;
 }
 
+// Return an array of the first n elements of an array. If n is undefined, return just the first element.
 function first(array, n) {
   if(n === 0) {
   	return [];
@@ -15,8 +17,18 @@ function first(array, n) {
   return array.slice(0, n);
 }
 
-function last() {
-
+// Like first, but for the last elements. If n is undefined, return just the last element.
+function last(array, n) {
+  if(n === 0) {
+    return [];
+  }
+  if(arguments.length < 2) {
+    return array[array.length - 1];  
+  }
+  if(n > array.length) {
+    return array;
+  }
+  return array.slice(array.length - n);
 }
 
 tests({
@@ -30,41 +42,43 @@ tests({
   },
 
   // First
-  // Return an array of the first n elements of an array. If n is undefined, return just the first element.
   'FIRST: It should pull the first element of an array': function () {
   	eq(first([1,2,3]), 1);
   }, 
   'FIRST: It should accept an index argument': function(){
-  	var actual = JSON.stringify(first([1,2,3], 2));
+  	var actual = JSON.stringify(first([1, 2, 3], 2));
   	var expected = JSON.stringify([1, 2]);
   	eq(actual, expected);
   },
   'FIRST: It should return empty array if zero is passed in as the index': function(){
-  	var actual = JSON.stringify(first([1,2,3], 0));
+  	var actual = JSON.stringify(first([1, 2, 3], 0));
   	var expected = JSON.stringify([]);
   	eq(actual, expected);
   },
   'FIRST: It should return all the array\'s elements if the index argument is larger than the length of the array': function(){
-  	var actual = JSON.stringify(first([1,2,3], 5));
-  	var expected = JSON.stringify([1,2,3]);
+  	var actual = JSON.stringify(first([1, 2, 3], 5));
+  	var expected = JSON.stringify([1, 2, 3]);
   	eq(actual, expected);
   },
 
-  // Last: 
-  // Like first, but for the last elements. If n is undefined, return just the last element.
+  // Last
   'LAST: It should pull the last element from an array': function(){
-  	var actual = JSON.stringify(last([1,2,3]));
-  	var expected = JSON.stringify(3);
-  	eq(actual, expected);
+  	eq(last([1, 2, 3]), 3);
   },
   'LAST: It should accept an index argument': function(){
-  	fail();
+  	var actual = JSON.stringify(last([1, 2, 3], 2));
+    var expected = JSON.stringify([2, 3]);
+    eq(actual, expected);
   },
   'LAST: It should return empty array if zero is passed in as the index': function(){
-  	fail();
+  	var actual = JSON.stringify(last([1, 2, 3], 0));
+    var expected = JSON.stringify([]);
+    eq(actual, expected);
   },
   'LAST: It should return all the array\'s elements if the index argument is larger than the length of the array': function(){
-  	fail();
+  	var actual = JSON.stringify(last([1, 2, 3], 5));
+    var expected = JSON.stringify([1, 2, 3]);
+    eq(actual, expected);
   },
 
 });
@@ -74,19 +88,3 @@ tests({
 
 </script>
 
-<!-- 
- it('', function() {
-        expect(_.last([1,2,3])).to.equal(3);
-      });
-
-      it('should accept an index argument', function() {
-        expect(_.last([1,2,3], 2)).to.eql([2, 3]);
-      });
-
-      it('should return empty array if zero is passed in as the index', function() {
-        expect(_.last([1,2,3], 0)).to.eql([]);
-      });
-
-      it('should return all the array\'s elements if the index argument is larger than the length of the array', function() {
-        expect(_.last([1,2,3], 5)).to.eql([1, 2, 3]);
-      }); -->
