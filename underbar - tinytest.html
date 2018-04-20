@@ -1,0 +1,92 @@
+<script src="tinytest.js"></script>
+<script>
+
+function identity(input){
+  return input;
+}
+
+function first(array, n) {
+  if(n === 0) {
+  	return [];
+  }
+  if(arguments.length < 2) {
+  	return array[0];
+  } 
+  return array.slice(0, n);
+}
+
+function last() {
+
+}
+
+tests({
+  // Identity
+  'IDENTITY: It should return whatever value is passed into it.': function(){
+  	eq(identity(6), 6);
+  	eq(identity('string'), 'string');
+  	eq(identity(false), false);
+  	var uniqueObj = {};
+  	eq(identity(uniqueObj), uniqueObj);
+  },
+
+  // First
+  // Return an array of the first n elements of an array. If n is undefined, return just the first element.
+  'FIRST: It should pull the first element of an array': function () {
+  	eq(first([1,2,3]), 1);
+  }, 
+  'FIRST: It should accept an index argument': function(){
+  	var actual = JSON.stringify(first([1,2,3], 2));
+  	var expected = JSON.stringify([1, 2]);
+  	eq(actual, expected);
+  },
+  'FIRST: It should return empty array if zero is passed in as the index': function(){
+  	var actual = JSON.stringify(first([1,2,3], 0));
+  	var expected = JSON.stringify([]);
+  	eq(actual, expected);
+  },
+  'FIRST: It should return all the array\'s elements if the index argument is larger than the length of the array': function(){
+  	var actual = JSON.stringify(first([1,2,3], 5));
+  	var expected = JSON.stringify([1,2,3]);
+  	eq(actual, expected);
+  },
+
+  // Last: 
+  // Like first, but for the last elements. If n is undefined, return just the last element.
+  'LAST: It should pull the last element from an array': function(){
+  	var actual = JSON.stringify(last([1,2,3]));
+  	var expected = JSON.stringify(3);
+  	eq(actual, expected);
+  },
+  'LAST: It should accept an index argument': function(){
+  	fail();
+  },
+  'LAST: It should return empty array if zero is passed in as the index': function(){
+  	fail();
+  },
+  'LAST: It should return all the array\'s elements if the index argument is larger than the length of the array': function(){
+  	fail();
+  },
+
+});
+
+// '': function(){},
+
+
+</script>
+
+<!-- 
+ it('', function() {
+        expect(_.last([1,2,3])).to.equal(3);
+      });
+
+      it('should accept an index argument', function() {
+        expect(_.last([1,2,3], 2)).to.eql([2, 3]);
+      });
+
+      it('should return empty array if zero is passed in as the index', function() {
+        expect(_.last([1,2,3], 0)).to.eql([]);
+      });
+
+      it('should return all the array\'s elements if the index argument is larger than the length of the array', function() {
+        expect(_.last([1,2,3], 5)).to.eql([1, 2, 3]);
+      }); -->
