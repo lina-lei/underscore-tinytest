@@ -8,13 +8,6 @@ function identity(input){
 
 // Return an array of the first n elements of an array. If n is undefined, return just the first element.
 function first(array, n) {
-  // if(n === 0) {
-  // 	return [];
-  // }
-  // if(arguments.length < 2) {
-  // 	return array[0];
-  // } 
-  // return array.slice(0, n);
   return n === undefined ? array[0] : array.slice(0, n);
 }
 
@@ -80,6 +73,8 @@ function reject(array, callback) {
   //   }
   // })
   // return filteredFalse;
+
+  // Alternate solution:
   return filter(array, function(element){
     return !callback(element);
   });
@@ -116,6 +111,14 @@ function uniq(array, isSorted, iteratee){
   // return result;
 }
 
+// Return the results of applying an iterator to each element.
+function map(array, callback){
+  var result = [];
+  each(array, function(ele){
+    result.push(callback(ele));
+  });
+  return result;
+}
 
 
 
@@ -326,11 +329,29 @@ tests({
     var numbers = [1, 2, 1, 3, 1, 4];
     var uniqueNumbers = uniq(numbers);
     eq(JSON.stringify(uniqueNumbers) !== JSON.stringify(numbers), true);
-  }
+  },
 
+  // map
+  'MAP: It should not mutate the input array': function(){
+    var input = [1,2,3,4,5];
+    var result = map(input, function(num) {});
+    eq(JSON.stringify(input), JSON.stringify([1,2,3,4,5]));
+  },
+  'MAP: It should apply a function to every value in an array': function(){
+    var doubledNumbers = map([1, 2, 3], function(num) {
+      return num * 2;
+    });
+    eq(JSON.stringify(doubledNumbers), JSON.stringify([2, 4, 6]));
+  },
+  'MAP: It should produce a brand new array instead of modifying the input array': function(){
+    var numbers = [1, 2, 3];
+    var mappedNumbers = map(numbers, function(num) {
+      return num;
+    });
+    eq(mappedNumbers !== numbers, true);
+  },
 
 
 });
 
 </script>
-

@@ -11,3 +11,4 @@ Functions implemented so far:
 6. filter
 7. reject
 8. uniq
+9. map
