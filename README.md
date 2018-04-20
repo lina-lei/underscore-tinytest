@@ -10,3 +10,4 @@ Functions implemented so far:
 5. indexOf
 6. filter
 7. reject
+8. uniq
