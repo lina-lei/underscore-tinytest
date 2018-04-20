@@ -5,3 +5,5 @@ Practice implementation of the Underscore Javascript library (http://underscorej
 Functions implemented so far:
 1. identify
 2. first
+3. last
+4. each
