@@ -8,27 +8,43 @@ function identity(input){
 
 // Return an array of the first n elements of an array. If n is undefined, return just the first element.
 function first(array, n) {
-  if(n === 0) {
-  	return [];
-  }
-  if(arguments.length < 2) {
-  	return array[0];
-  } 
-  return array.slice(0, n);
+  // if(n === 0) {
+  // 	return [];
+  // }
+  // if(arguments.length < 2) {
+  // 	return array[0];
+  // } 
+  // return array.slice(0, n);
+  return n === undefined ? array[0] : array.slice(0, n);
 }
 
 // Like first, but for the last elements. If n is undefined, return just the last element.
 function last(array, n) {
-  if(n === 0) {
-    return [];
+  // if(n === 0) {
+  //   return [];
+  // }
+  // if(arguments.length < 2) {
+  //   return array[array.length - 1];  
+  // }
+  // if(n > array.length) {
+  //   return array;
+  // }
+  // return array.slice(array.length - n);
+  return n === undefined ? array[array.length - 1] : array.slice(Math.max(0, array.length - n));
+}
+
+// Call iterator(value, key, collection) for each element of collection. Accepts both arrays and objects.
+  // each does not have a return value, but rather simply runs the iterator function over each item in the input collection.
+function each(collection, iterator){
+  if(Array.isArray(collection)) {
+    for(var i = 0; i < collection.length; i++){
+      iterator(collection[i], i, collection);
+    }  
+  } else {
+    for(var keys in collection) {
+      iterator(collection[keys], keys, collection);
+    }
   }
-  if(arguments.length < 2) {
-    return array[array.length - 1];  
-  }
-  if(n > array.length) {
-    return array;
-  }
-  return array.slice(array.length - n);
 }
 
 tests({
@@ -80,6 +96,92 @@ tests({
     var expected = JSON.stringify([1, 2, 3]);
     eq(actual, expected);
   },
+
+  // Each
+  'EACH: It should be a function': function(){
+    eq(each instanceof Function, true);
+  },
+  'EACH: It should not return anything': function(){
+    var returnValue = each([], function(){});
+    eq(returnValue, null);
+  },
+  'EACH: It should not mutate the input array': function(){
+    var input = [1,2,3,4,5];
+    var result = each(input, function() {});
+    eq(JSON.stringify(input), JSON.stringify([1,2,3,4,5]));
+  },
+  'EACH: It should iterate over arrays and provide access to each value': function(){
+    var letters = ['a', 'b', 'c'];
+    var iterations = [];
+    each(letters, function(letter) {
+      iterations.push(letter);
+    });
+    eq(JSON.stringify(iterations), JSON.stringify(['a','b','c']));
+  },
+  'EACH: It should iterate over arrays and provide access to each index': function(){
+    var letters = ['a', 'b', 'c'];
+    var iterations = [];
+    each(letters, function(letter, index) {
+      iterations.push(index);
+    });
+    eq(JSON.stringify(iterations), JSON.stringify([0, 1, 2]));
+  },
+  'EACH: It should iterate over arrays and provide access to the original collection': function(){
+    var letters = ['a', 'b', 'c'];
+    var iterations = [];
+    each(letters, function(letter, index, collection) {
+      iterations.push(collection);
+    });
+    eq(JSON.stringify(iterations), JSON.stringify([['a', 'b', 'c'], ['a', 'b', 'c'], ['a', 'b', 'c']]));
+  },
+  'EACH: It should only iterate over numeric keys of an array, not all properties': function(){
+    var iterations = [];
+    var letters = ['a', 'b', 'c'];
+    letters.someProperty = 'Do not iterate over me!';
+    each(letters, function(letter, index, collection) {
+      iterations.push(letter);
+    });
+    eq(iterations.includes('Do not iterate over me!'), false);
+  },
+  'EACH: It should iterate over objects and provide access to each value': function(){
+    var animals = {d: 'dog', e: 'elephant', f: 'flotsam'};
+    var iterations = [];
+    each(animals, function(value) {
+      iterations.push(value);
+    });
+    eq(JSON.stringify(iterations), JSON.stringify(['dog', 'elephant', 'flotsam']));
+  },
+  'EACH: It should iterate over objects and provide access to each key': function(){
+    var animals = {d: 'dog', e: 'elephant', f: 'flotsam'};
+    var iterations = [];
+    each(animals, function(value, key) {
+      iterations.push(key);
+    });
+    eq(JSON.stringify(iterations), JSON.stringify(['d', 'e', 'f']));
+  },
+  'EACH: It should iterate over objects and provide access to the original object': function(){
+    var animals = {d: 'dog', e: 'elephant', f: 'flotsam'};
+    var iterations = [];
+    each(animals, function(value, key, collection) {
+      iterations.push(collection);
+    });
+    eq(JSON.stringify(iterations), JSON.stringify([{d: 'dog', e: 'elephant', f: 'flotsam'}, {d: 'dog', e: 'elephant', f: 'flotsam'}, {d: 'dog', e: 'elephant', f: 'flotsam'}]));
+  },
+  'EACH: It should not confuse an object with a `length` property for an array': function(){
+    var dresser = { length: 39, width: 79, height: 127};
+    var iterations = [];
+    each(dresser, function(value, property, object) {
+      iterations.push([value, property, object]);
+    });
+    eq(JSON.stringify(iterations), JSON.stringify([
+      [39, 'length', dresser],
+      [79, 'width', dresser],
+      [127, 'height', dresser]
+    ]));
+  },
+
+
+
 
 });
 
