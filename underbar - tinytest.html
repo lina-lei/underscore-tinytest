@@ -69,6 +69,24 @@ function filter(array, callback){
   return result;
 }
 
+// Return all elements of an array that don't pass a truth test.
+  // TIP: see if you can re-use filter() here, without simply copying code in and modifying it
+function reject(array, callback) {
+  // var filteredFalse = [];
+  // var filteredTrue = filter(array, callback);
+  // each(array, function(element){
+  //   if(!filteredTrue.includes(element)){
+  //     filteredFalse.push(element);
+  //   }
+  // })
+  // return filteredFalse;
+  return filter(array, function(element){
+    return !callback(element);
+  });
+}
+
+
+
 // ====================================================================================================================
 
 tests({
@@ -234,6 +252,24 @@ tests({
     var numbers = [1, 2, 3, 4, 5, 6];
     var odds = filter(numbers, isOdd);
     eq(JSON.stringify(odds) === JSON.stringify(numbers), false);
+  },
+
+  // reject
+  'REJECT: It should reject all even numbers': function(){
+    var isEven = function(num) { return num % 2 === 0; };
+    var odds = reject([1, 2, 3, 4, 5, 6], isEven);
+    eq(JSON.stringify(odds), JSON.stringify([1, 3, 5]));
+  },
+  'REJECT: It should reject all odd numbers': function(){
+    var isOdd = function(num) { return num % 2 !== 0; };
+    var evens = reject([1, 2, 3, 4, 5, 6], isOdd);
+    eq(JSON.stringify(evens), JSON.stringify([2, 4, 6]));
+  },
+  'REJECT: It should produce a brand new array instead of modifying the input array': function(){
+    var isOdd = function(num) { return num % 2 !== 0; };
+    var numbers = [1, 2, 3, 4, 5, 6];
+    var evens = reject(numbers, isOdd);
+    eq(JSON.stringify(evens) === JSON.stringify(numbers), false);
   },
 
 
