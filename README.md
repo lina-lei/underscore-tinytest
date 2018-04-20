@@ -12,3 +12,5 @@ Functions implemented so far:
 7. reject
 8. uniq
 9. map
+10. pluck
+11. reduce

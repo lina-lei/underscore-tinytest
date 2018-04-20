@@ -114,12 +114,33 @@ function uniq(array, isSorted, iteratee){
 // Return the results of applying an iterator to each element.
 function map(array, callback){
   var result = [];
-  each(array, function(ele){
-    result.push(callback(ele));
+  each(array, function(value, index, collection){
+    result.push(callback(value, index, collection));
   });
   return result;
 }
 
+// Takes an array of objects and returns an array of the values of a certain property in it. 
+  // E.g. take an array of people and return an array of just their ages
+function pluck(collection, key){
+  return map(collection, function(element){
+    return element[key];
+  });
+}
+
+// Reduces an array or object to a single value by repetitively calling iterator(accumulator, item) for each item. 
+  // accumulator should be the return value of the previous iterator call.
+function reduce(array, callback, accumulator) {
+  var result = accumulator;
+  if(arguments.length < 3){
+    result = array[0];
+    array = array.slice(1);
+  } 
+  each(array, function(element, index, collection){
+    result = callback(result, element, index, collection);
+  });
+  return result;
+}
 
 
 
@@ -351,7 +372,94 @@ tests({
     eq(mappedNumbers !== numbers, true);
   },
 
+  // pluck
+  'PLUCK: It should return values contained at a user-defined property': function(){
+    var people = [
+      { name: 'moe', age: 30 },
+      { name: 'curly', age: 50 }
+    ];
+    eq(JSON.stringify(pluck(people, 'name')), JSON.stringify(['moe', 'curly']));
+  },
+  'PLUCK: It should not modify the original array': function(){
+    var people = [
+      { name: 'moe', age: 30 },
+      { name: 'curly', age: 50 }
+    ];
+    pluck(people, 'name');
+    eq(JSON.stringify(people), JSON.stringify([{ name: 'moe', age: 30 }, { name: 'curly', age: 50 }]));
+  },
 
+  // reduce
+  'REDUCE: It should be a function': function(){
+    eq(reduce instanceof Function, true);
+  },
+  'REDUCE: It should return a value': function(){
+    var result = reduce([3,2,1], function(memo, item) {return item;});
+    eq(result !== null, true);
+  },
+  'REDUCE: It should not mutate the input array': function(){
+    var input = [1,2,3,4,5];
+    var result = reduce(input, function(memo, item) {return item;});
+    eq(JSON.stringify(input), JSON.stringify([1,2,3,4,5]));
+  },
+  'REDUCE: It should invoke the iterator function with arguments (memo, item) in that order': function(){
+    var memoInCallback, itemInCallback;
+    reduce(['item'], function(memo, item) {
+      memoInCallback = memo;
+      itemInCallback = item;
+    }, 'memo');
+    eq(memoInCallback, 'memo');
+    eq(itemInCallback, 'item');
+  },
+  'REDUCE: It should pass items of the array into the iterator from left to right': function(){
+    var orderTraversed = [];
+    reduce([1,2,3,4], function(memo, item) {
+      orderTraversed.push(item);
+      return memo;  
+    }, 10);
+    eq(JSON.stringify(orderTraversed), JSON.stringify([1,2,3,4]));
+  },
+  'REDUCE: It should continue to call iterator even if the iterator returns undefined': function(){
+    var callCount = 0;
+    var returnFalsy = function(total, item) {
+      callCount++;
+      if (callCount === 1) {
+        return undefined;
+      } else {
+        return item + 1;
+      }
+    };
+    var total = reduce([1,1,2], returnFalsy);
+    eq(total, 3);
+  },
+  'REDUCE: It should pass every item of the array into the iterator if a memo is passed in': function(){
+    var result = reduce([1,2,3], function(memo, item) {
+      return memo - item;
+    }, 10);
+    eq(result, 4);
+  },
+  'REDUCE: It should accept falsy values as a valid memo': function(){  // Be careful how you check if a memo has been passed in
+    var result = reduce([1,2,3], function(memo, item) {
+      return memo * item;
+    }, 0);
+    eq(result, 0);
+  },
+  'REDUCE: It should set memo to be the first item of the array if no memo is passed in': function(){
+    var result = reduce([1,2,3], function(memo) {
+      return memo;
+    });
+    eq(result, 1);
+  },
+  'REDUCE: It should pass the second item of the array into the iterator first if a memo is not passed in': function(){
+    var result = reduce([3,2,1], function(memo, item) {
+      return memo - item;
+    });
+    eq(result, 0);
+  },
 });
 
 </script>
+
+Red = tests failing<br>
+Green = tests pass<br>
+Open developer tools to see tests in the console 
