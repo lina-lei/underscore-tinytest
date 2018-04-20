@@ -9,3 +9,4 @@ Functions implemented so far:
 4. each
 5. indexOf
 6. filter
+7. reject
