@@ -142,7 +142,16 @@ function reduce(array, callback, accumulator) {
   return result;
 }
 
-
+// Determine if the array or object contains a given value (using `===`).
+  // TIP: Many iteration problems can be most easily expressed in terms of reduce().
+function contains(collection, target){
+  return reduce(collection, function(wasFound, item){
+    if(wasFound){
+      return true;
+    }
+    return item === target;
+  }, false);
+}
 
 
 
@@ -456,6 +465,32 @@ tests({
     });
     eq(result, 0);
   },
+
+  // contains
+  'CONTAINS: It should be a function': function(){
+    eq(contains instanceof Function, true);
+  },
+  'CONTAINS: It should not mutate the input array': function(){
+    var input = [1,2,3,4,5];
+    var result = contains(input, 4);
+    eq(JSON.stringify(input), JSON.stringify([1,2,3,4,5]));
+  },'CONTAINS: It should return true given an array and a value from that array': function(){
+    var input = [1,2,3,4,5];
+    eq(contains(input, 3), true);
+  },'CONTAINS: It should return false given an array and a value not in that array': function(){
+    var input = [1,2,3,4,5];
+    eq(contains(input, 0), false);
+  },'CONTAINS: It should return true given a object and a value from that object': function(){
+    var object = { a: 1, b: 2, c: 3 };
+    eq(contains(object, 1), true);
+  },'CONTAINS: It should return false given an object and a value not in that object': function(){
+    var object = { a: 1, b: 2, c: 3 };
+    eq(contains(object, 'bob'), false);
+  },
+
+
+
+
 });
 
 </script>
